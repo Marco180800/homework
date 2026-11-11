@@ -97,4 +97,3 @@ your progress, what you tried, and what you would investigate next.
 
 **Verification:**
 - `git diff --cached --check` completed without errors.
-

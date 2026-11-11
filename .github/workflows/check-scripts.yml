@@ -41,8 +41,23 @@ jobs:
         run: |
           output="$(bash task-2-configuration/show-service.sh)"
 
-          grep -Fxq "Service: sample-worker" <<< "$output"
-          grep -Fxq "Environment: test" <<< "$output"
+          echo "Actual script output:"
+          printf '%s\n' "$output" | cat -v
+
+          echo "Validating service name..."
+          if ! grep -Fxq "Service: sample-worker" <<< "$output"; then
+            echo "ERROR: Unexpected service name"
+            exit 1
+          fi
+
+          echo "Validating environment..."
+          if ! grep -Fxq "Environment: test" <<< "$output"; then
+            echo "ERROR: Unexpected environment"
+            exit 1
+          fi
+
+          echo "All output checks passed."
+
 
       - name: Verify missing configuration handling
         working-directory: junior
