@@ -1,0 +1,76 @@
+
+name: Check Bash Scripts
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check-scripts:
+    name: Validate and execute Bash scripts
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Bash syntax
+        run: |
+          bash -n junior/task-1-script/random-data.sh
+          bash -n junior/task-2-configuration/show-service.sh
+
+      - name: Execute Task 1
+        run: bash junior/task-1-script/random-data.sh
+
+      - name: Execute Task 2 from exercise root
+        working-directory: junior
+        run: bash task-2-configuration/show-service.sh
+
+      - name: Execute Task 2 from another directory
+        working-directory: junior
+        run: |
+          repo_root="$(pwd)"
+          (cd .. && bash "$repo_root/task-2-configuration/show-service.sh")
+
+      - name: Verify Task 2 output
+        working-directory: junior
+        run: |
+          output="$(bash task-2-configuration/show-service.sh)"
+
+          echo "Actual script output:"
+          printf '%s\n' "$output" | cat -v
+
+          echo "Validating service name..."
+          if ! grep -Fxq "Service: sample-worker" <<< "$output"; then
+            echo "ERROR: Unexpected service name"
+            exit 1
+          fi
+
+          echo "Validating environment..."
+          if ! grep -Fxq "Environment: test" <<< "$output"; then
+            echo "ERROR: Unexpected environment"
+            exit 1
+          fi
+
+          echo "All output checks passed."
+
+
+      - name: Verify missing configuration handling
+        working-directory: junior
+        run: |
+          config="task-2-configuration/service.conf"
+          backup="${config}.bak"
+
+          mv "$config" "$backup"
+          trap 'mv "$backup" "$config"' EXIT
+
+          if bash task-2-configuration/show-service.sh >error.log 2>&1; then
+            echo "ERROR: Script succeeded without configuration"
+            exit 1
+          fi
+
+          grep -q "configuration file not found" error.log
