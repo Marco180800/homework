@@ -1,7 +1,9 @@
+
 #!/usr/bin/env bash
 set -euo pipefail
 
-config_file="service.conf"
+dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+config_file="$dir/service.conf"
 
 if [[ ! -f "$config_file" ]]; then
     printf 'Error: configuration file not found: %s\n' "$config_file" >&2
