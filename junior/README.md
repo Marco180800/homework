@@ -58,6 +58,8 @@ and pull request triggers, and ensure a script failure fails the workflow.
 
 Stop after approximately one hour. If anything remains unresolved, submit
 your progress, what you tried, and what you would investigate next.
+
+
 ## Findings
 
 ### Task 1 – Bash Script
@@ -97,3 +99,8 @@ your progress, what you tried, and what you would investigate next.
 
 **Verification:**
 - `git diff --cached --check` completed without errors.
+- Successfully executed the workflow using GitHub Actions on Ubuntu.
+- Verified Bash syntax and successful execution of both scripts.
+- Confirmed that Task 2 works independently of the caller's working directory.
+- Verified expected configuration output and nonzero exit status when configuration is missing.
+- Confirmed that all workflow steps completed successfully in GitHub Actions run #2.
